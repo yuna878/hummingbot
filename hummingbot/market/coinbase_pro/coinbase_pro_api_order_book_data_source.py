@@ -157,6 +157,7 @@ class CoinbaseProAPIOrderBookDataSource(OrderBookTrackerDataSource):
                         snapshot_timestamp,
                         metadata={"symbol": trading_pair}
                     )
+                    print(snapshot_msg)
                     order_book: CoinbaseProOrderBook = CoinbaseProOrderBook()
                     active_order_tracker: CoinbaseProActiveOrderTracker = CoinbaseProActiveOrderTracker()
                     bids, asks = active_order_tracker.convert_snapshot_message_to_order_book_row(snapshot_msg)
