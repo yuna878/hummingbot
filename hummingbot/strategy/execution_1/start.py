@@ -8,32 +8,37 @@ from hummingbot.strategy.execution_1 import (
     Execution1Strategy
 )
 from hummingbot.strategy.execution_1.execution_1_config_map import execution_1_config_map
+from hummingbot.client.settings import (
+    EXAMPLE_PAIRS,
+)
 
 
 def start(self):
     try:
         market = execution_1_config_map.get("market").value.lower()
-        raw_market_symbol = execution_1_config_map.get("market_symbol_pair").value
+        asset_symbol: str = execution_1_config_map.get("asset_symbol").value
 
         try:
-            assets: Tuple[str, str] = self._initialize_market_assets(market, [raw_market_symbol])[0]
+            symbol_pair: str = EXAMPLE_PAIRS.get(market)
+            symbol_split: Tuple[str, str] = self._initialize_market_assets(market, [symbol_pair])[0]
         except ValueError as e:
             self._notify(str(e))
             return
 
-        market_names: List[Tuple[str, List[str]]] = [(market, [raw_market_symbol])]
+        market_names: List[Tuple[str, List[str]]] = [(market, [symbol_pair])]
 
-        self._initialize_wallet(token_symbols=list(set(assets)))
+        self._initialize_wallet(token_symbols=list(set(symbol_split)))
         self._initialize_markets(market_names)
-        self.assets = set(assets)
+        self.assets = set(symbol_split)
 
-        maker_data = [self.markets[market], raw_market_symbol] + list(assets)
+        maker_data = [self.markets[market], symbol_pair] + list(symbol_split)
         self.market_symbol_pairs = [MarketSymbolPair(*maker_data)]
 
         strategy_logging_options = Execution1Strategy.OPTION_LOG_ALL
 
         self.strategy = Execution1Strategy(market_infos=[MarketSymbolPair(*maker_data)],
-                                           logging_options=strategy_logging_options)
+                                           logging_options=strategy_logging_options,
+                                           asset_symbol=asset_symbol)
     except Exception as e:
         self._notify(str(e))
         self.logger().error("Unknown error during initialization.", exc_info=True)

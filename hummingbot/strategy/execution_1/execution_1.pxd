@@ -7,3 +7,4 @@ cdef class Execution1Strategy(StrategyBase):
         dict _market_infos
 
         int64_t _logging_options
+        str _asset_symbol
