@@ -12,7 +12,7 @@ def symbol_prompt():
     market = execution_2_config_map.get("market").value
     example = EXAMPLE_PAIRS.get(market)
     return "Enter the token symbol to fetch its order book on %s%s >>> " \
-           % (market, f" (e.g. single token from {example})" if example else "")
+           % (market, f" (e.g. {example})" if example else "")
 
 
 execution_2_config_map = {
